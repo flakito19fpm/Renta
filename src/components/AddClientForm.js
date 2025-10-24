@@ -39,7 +39,8 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
     { value: 'nayarit', label: 'Nayarit' },  
     { value: 'dolce-aroma', label: 'Dolce Aroma' },  
     { value: 'pluma', label: 'Pluma' },  
-    { value: 'descafeinado', label: 'Descafeinado' }  
+    { value: 'descafeinado', label: 'Descafeinado' },  
+    { value: 'mezcla', label: 'Mezcla' } // Nueva opción para mezclas exclusivas  
   ];  
 
   useEffect(() => {  
@@ -74,9 +75,19 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
     setFormData(prev => ({ ...prev, coffee_type: value }));  
   };  
 
+  const handleServiceTypeChange = (e) => {  
+    const value = e.target.value;  
+    setFormData(prev => ({ ...prev, service_type: value }));  
+    // Si cambia a comodato y no hay coffee_type, opcional por ahora, validará en submit  
+  };  
+
   const handleChange = (e) => {  
     const { name, value } = e.target;  
     setFormData(prev => ({ ...prev, [name]: value }));  
+    // Si cambia service_type, llamar handler específico  
+    if (name === 'service_type') {  
+      handleServiceTypeChange(e);  
+    }  
   };  
 
   const getFinalZone = () => {  
@@ -88,9 +99,18 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
     return selectedOption ? selectedOption.label : formData.coffee_type || '';  
   };  
 
+  const isCoffeeRequired = () => formData.service_type === 'comodato';  
+
+  const isValid = () => {  
+    if (!getFinalZone().trim()) return false;  
+    if (isCoffeeRequired() && !getFinalCoffee().trim()) return false;  
+    return true;  
+  };  
+
   const handleSubmit = async (e) => {  
     e.preventDefault();  
-    const finalData = { ...formData,  
+    const finalData = {  
+      ...formData,  
       zone: getFinalZone(),  
       coffee_type: getFinalCoffee()  
     };  
@@ -100,8 +120,8 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
       alert('Selecciona o escribe una zona válida');  
       return;  
     }  
-    if (!finalData.coffee_type.trim()) {  
-      alert('Selecciona un tipo de café válido');  
+    if (isCoffeeRequired() && !finalData.coffee_type.trim()) {  
+      alert('Para Comodato, el Tipo de Café es obligatorio. Selecciona uno.');  
       return;  
     }  
     setLoading(true);  
@@ -267,14 +287,19 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
                 name="coffee_type"  
                 value={formData.coffee_type}  
                 onChange={handleCoffeeChange}  
-                required  
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"  
+                required={isCoffeeRequired()} // Required solo si comodato  
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all ${  
+                  isCoffeeRequired() && !getFinalCoffee().trim() ? 'border-red-300 ring-red-500' : ''  
+                }`}  
               >  
-                <option value="">Seleccionar tipo de café...</option>  
+                <option value="">Seleccionar tipo de café... {isCoffeeRequired() ? '(Obligatorio para Comodato)' : '(Opcional para Renta)'}</option>  
                 {coffeeOptions.map(opt => (  
                   <option key={opt.value} value={opt.value}>{opt.label}</option>  
                 ))}  
               </select>  
+              {isCoffeeRequired() && !getFinalCoffee().trim() && (  
+                <p className="text-xs text-red-600 mt-1">Obligatorio para Comodato</p>  
+              )}  
             </div>  
             <div>  
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">  
@@ -322,8 +347,12 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
             </button>  
             <button  
               type="submit"  
-              disabled={loading || !getFinalZone().trim() || !getFinalCoffee().trim()}  
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"  
+              disabled={loading || !isValid()}  
+              className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${  
+                isValid()  
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg'  
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'  
+              }`}  
             >  
               {loading ? 'Guardando...' : (isEditMode ? 'Actualizar Cliente' : 'Guardar Cliente')}  
               {isEditMode ? <Save className="w-4 h-4" /> : <Plus className="w-4 h-4" />}  
