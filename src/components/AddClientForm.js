@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';  
 import { motion } from 'framer-motion';  
-import { Plus, X, Save, MapPin, Users, Key, Coffee, CalendarDays, DollarSign } from 'lucide-react';  
+import { Plus, X, Save, MapPin, Users, Key, Coffee, CalendarDays, DollarSign, Phone } from 'lucide-react';  
 import { supabase } from '../utils/supabase';  
 
 const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {  
@@ -9,6 +9,7 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
     zone: '',  
     customZone: '', // Para "Otro" en zona  
     name: '',  
+    phone: '', // Nuevo campo para teléfono  
     rental_key: '',  
     service_type: 'renta',  
     cutoff_day: 15,  
@@ -40,7 +41,7 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
     { value: 'dolce-aroma', label: 'Dolce Aroma' },  
     { value: 'pluma', label: 'Pluma' },  
     { value: 'descafeinado', label: 'Descafeinado' },  
-    { value: 'mezcla', label: 'Mezcla' } // Nueva opción para mezclas exclusivas  
+    { value: 'mezcla', label: 'Mezcla' }  
   ];  
 
   useEffect(() => {  
@@ -51,6 +52,7 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
         ...clientToEdit,  
         zone: zoneValue,  
         customZone: zoneValue === 'otro' ? clientToEdit.zone : '',  
+        phone: clientToEdit.phone || '', // Cargar teléfono  
         coffee_type: coffeeValue  
       });  
       setShowCustomZone(zoneValue === 'otro');  
@@ -78,11 +80,15 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
   const handleServiceTypeChange = (e) => {  
     const value = e.target.value;  
     setFormData(prev => ({ ...prev, service_type: value }));  
-    // Si cambia a comodato y no hay coffee_type, opcional por ahora, validará en submit  
   };  
 
   const handleChange = (e) => {  
-    const { name, value } = e.target;  
+    let { name, value } = e.target;  
+    // Máscara básica para teléfono: solo números + y espacios  
+    if (name === 'phone') {  
+      value = value.replace(/[^\d+\s]/g, ''); // Solo dígitos, + y espacios  
+      if (value.length > 15) value = value.slice(0, 15);  
+    }  
     setFormData(prev => ({ ...prev, [name]: value }));  
     // Si cambia service_type, llamar handler específico  
     if (name === 'service_type') {  
@@ -112,7 +118,8 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
     const finalData = {  
       ...formData,  
       zone: getFinalZone(),  
-      coffee_type: getFinalCoffee()  
+      coffee_type: getFinalCoffee(),  
+      phone: formData.phone.trim() // Incluir teléfono  
     };  
     // Borrar campo temporal antes de enviar  
     delete finalData.customZone;  
@@ -232,6 +239,20 @@ const AddClientForm = ({ onClose, clientToEdit = null, onSuccess }) => {
                 value={formData.name}  
                 onChange={handleChange}  
                 required  
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"  
+              />  
+            </div>  
+            <div>  
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">  
+                <Phone className="w-4 h-4" />  
+                Teléfono (Opcional)  
+              </label>  
+              <input  
+                type="tel"  
+                name="phone"  
+                value={formData.phone}  
+                onChange={handleChange}  
+                placeholder="Ej: +52 998 123 4567"  
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"  
               />  
             </div>  
