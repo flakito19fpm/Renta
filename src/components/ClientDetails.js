@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';  
 import { useParams, useNavigate } from 'react-router-dom';  
 import { supabase } from '../utils/supabase';  
-import { Users, MapPin, Key, Coffee, Calendar, AlertCircle, CheckCircle2, Edit, Trash2, LayoutDashboard, Plus, FileText } from 'lucide-react';  
+import { Users, MapPin, Key, Coffee, Calendar, AlertCircle, CheckCircle2, Edit, Trash2, LayoutDashboard, Plus, FileText, Phone } from 'lucide-react';  
 import FollowupForm from './FollowupForm';  
 import AddClientForm from './AddClientForm';  
 
@@ -140,7 +140,8 @@ const ClientDetails = () => {
               </div>  
               <div className="flex-1">  
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{client.name}</h1>  
-                <p className="text-xl text-gray-600 mb-6">#{client.customer_number} • {client.zone}</p>  
+                <p className="text-xl text-gray-600 mb-2">#{client.customer_number} • {client.zone}</p>  
+                {client.phone && <p className="text-lg text-gray-700 mb-6"><Phone className="w-5 h-5 inline -ml-1 mr-2" />{client.phone}</p>}  
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">  
                   <div className="flex items-center gap-2">  
                     <Key className="w-4 h-4 text-gray-500" /> {client.rental_key}  

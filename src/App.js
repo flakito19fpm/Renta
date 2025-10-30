@@ -126,7 +126,7 @@ const Dashboard = () => {
           </div>  
           <p className="text-3xl font-bold text-red-600">{stats.debtors}</p>  
           <p className="text-sm text-red-700 mt-2">Facturados sin pago</p>  
-          <Link to="/reports" className="text-red-600 hover:underline text-sm mt-2 block">Ver →</Link>  
+          <Link to="/reports" state={{ tab: 'debtors' }} className="text-red-600 hover:underline text-sm mt-2 block">Ver →</Link>  
         </motion.div>  
 
         <motion.div  
@@ -142,7 +142,7 @@ const Dashboard = () => {
           </div>  
           <p className="text-3xl font-bold text-orange-600">{stats.waiting}</p>  
           <p className="text-sm text-orange-700 mt-2">Esperando acción</p>  
-          <Link to="/reports" className="text-orange-600 hover:underline text-sm mt-2 block">Ver →</Link>  
+          <Link to="/reports" state={{ tab: 'pending' }} className="text-orange-600 hover:underline text-sm mt-2 block">Ver →</Link>  
         </motion.div>  
 
         <motion.div  
@@ -158,7 +158,7 @@ const Dashboard = () => {
           </div>  
           <p className="text-3xl font-bold text-blue-600">{stats.contacted}</p>  
           <p className="text-sm text-blue-700 mt-2">Ya se contactó</p>  
-          <Link to="/reports" className="text-blue-600 hover:underline text-sm mt-2 block">Ver →</Link>  
+          <Link to="/reports" state={{ tab: 'pending' }} className="text-blue-600 hover:underline text-sm mt-2 block">Ver →</Link>  
         </motion.div>  
 
         <motion.div  
@@ -174,7 +174,7 @@ const Dashboard = () => {
           </div>  
           <p className="text-3xl font-bold text-green-600">{stats.paid}</p>  
           <p className="text-sm text-green-700 mt-2">Cobros cerrados</p>  
-          <Link to="/reports" className="text-green-600 hover:underline text-sm mt-2 block">Ver →</Link>  
+          <Link to="/reports" state={{ tab: 'paid' }} className="text-green-600 hover:underline text-sm mt-2 block">Ver →</Link>  
         </motion.div>  
       </div>  
 
@@ -206,7 +206,7 @@ const Dashboard = () => {
         >  
           <FileText className="w-12 h-12 text-blue-600 mx-auto mb-4" />  
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Reportes</h2>  
-          <p className="text-gray-600">Deudores, pagados e historial detallado.</p>  
+          <p className="text-gray-600">Deudores, pendientes, pagados e historial detallado.</p>  
         </Link>  
       </motion.div>  
     </motion.div>  

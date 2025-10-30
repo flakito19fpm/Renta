@@ -1,6 +1,6 @@
 import React from 'react';  
 import { motion } from 'framer-motion';  
-import { Users, MapPin, Key, Coffee, Calendar, Edit2 } from 'lucide-react';  
+import { Users, MapPin, Key, Coffee, Calendar, Edit2, Phone } from 'lucide-react';  
 import { Link } from 'react-router-dom';  
 import AddClientForm from './AddClientForm';  
 
@@ -37,6 +37,12 @@ const ClientCard = ({ client, onEdit, onCloseEdit }) => {
             </div>  
           </div>  
           <div className="space-y-2 text-sm">  
+            {client.phone && (  
+              <div className="flex items-center gap-2">  
+                <Phone className="w-4 h-4 text-gray-500" />  
+                <span className="font-medium">{client.phone}</span>  
+              </div>  
+            )}  
             <div className="flex items-center gap-2">  
               <MapPin className="w-4 h-4 text-gray-500" />  
               <span className="font-medium">{client.zone}</span>  
